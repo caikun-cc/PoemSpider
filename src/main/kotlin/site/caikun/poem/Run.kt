@@ -1,5 +1,6 @@
 package site.caikun.poem
 
 fun main() {
-    println("hello world!")
+    val poems = PoemSpider().poesy()
+    println(poems.poems.size)
 }
