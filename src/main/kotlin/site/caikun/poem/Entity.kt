@@ -12,3 +12,15 @@ data class Poem(
 data class Poems(
     var poems: List<Poem>
 )
+
+data class Verse(
+    var id: String? = "",
+    var content: String? = "",
+    var from: String? = "",
+    var link: String? = "",
+    var type: String? = "",
+)
+
+data class Verses(
+    var verses: List<Verse>
+)

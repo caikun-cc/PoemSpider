@@ -10,10 +10,16 @@ class PoemSpider {
 
         private const val href = "href"
         private const val poesyURL = "https://so.gushiwen.cn/shiwens/"
+        private const val verseURL = "https://so.gushiwen.cn/mingjus/"
     }
 
-    private val urls = mutableListOf<String>()
+    private val poesyUrls = mutableListOf<String>()
+    private val sentences = mutableListOf<Verse>()
 
+    /**
+     * 爬取古诗
+     * @return 存放古诗的Poems对象
+     */
     fun poesy(): Poems {
         val poems = mutableListOf<Poem>()
         val authors = mutableMapOf<String, String>()
@@ -36,22 +42,53 @@ class PoemSpider {
                 addUrls(v)
             }
 
-            println(urls.size)
             //爬取获取到的所有古诗链接
-            if (urls.isNotEmpty()) {
-                urls.forEach {
+            if (poesyUrls.isNotEmpty()) {
+                poesyUrls.forEach {
                     poems.add(details(it))
                 }
             }
+            println("sun:${poems.size}")
         }
         return Poems(poems)
     }
 
+    /**
+     * 爬取名句
+     * @return 存放名句的Verses对象
+     */
+    fun verse(): Verses {
+        val types = mutableMapOf<String, String>()
+
+        //获取分类
+        val html = Jsoup.parse(Http.request(verseURL))
+        html.select("#type1 a").forEach {
+            if (it.attr(href).isNotEmpty()) {
+                val url = website + it.attr(href)
+                types[it.text()] = url
+            }
+        }
+
+        //获取每个分类下名句
+        if (types.isNotEmpty()) {
+            types.forEach { (k, v) ->
+                println("$k:$v")
+                sentence(v)
+            }
+            println("sun:${sentences.size}")
+        }
+        return Verses(sentences)
+    }
+
+    /**
+     * 获取页面古诗链接，存放值列表中，递归的方式进行翻页
+     * @param url 页面地址
+     */
     private fun addUrls(url: String) {
         val html = Jsoup.parse(Http.request(url))
         html.select(".sons .cont :nth-child(2) a").forEach {
             if (it.attr(href).isNotEmpty()) {
-                urls.add(website + it.attr(href))
+                poesyUrls.add(website + it.attr(href))
                 println(it.text() + ":" + website + it.attr(href))
             }
         }
@@ -64,7 +101,6 @@ class PoemSpider {
     }
 
     private fun details(url: String): Poem {
-        println(url)
         val html = Jsoup.parse(Http.request(url))
         val poem = Poem().apply {
             link = url
@@ -81,5 +117,24 @@ class PoemSpider {
         }
         println(poem)
         return poem
+    }
+
+    private fun sentence(url: String) {
+        val html = Jsoup.parse(Http.request(url))
+        html.select(".left .sons .cont").forEach {
+            sentences.add(Verse().apply {
+                id = UUID.randomUUID().toString().replace("-", "")
+                content = it.text().split("——")[0].replace(" ", "")
+                from = it.text().split("——")[1].replace(" ", "")
+                link = website + it.select(":nth-child(1)").attr(href)
+                type = html.select("#type1 .sright span")[0].text()
+            })
+        }
+
+        //下一页
+        val more = html.select(".amore")
+        if (more.attr(href).isNotEmpty()) {
+            sentence(more.attr(href))
+        }
     }
 }

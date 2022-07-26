@@ -1,6 +1,41 @@
 package site.caikun.poem
 
+import com.google.gson.Gson
+import java.io.File
+import java.util.*
+
+private val spider = PoemSpider()
+private const val path = "./src/main/resources/"
+
 fun main() {
-    val poems = PoemSpider().poesy()
-    println(poems.poems.size)
+
+    while (true) {
+        println("\n\n====================================================================")
+        println("1、爬取古诗")
+        println("2、爬取名句")
+        println("====================================================================\n\n")
+        println("输入序号:")
+        when (Scanner(System.`in`).nextInt()) {
+            1 -> {
+                runCatching {
+                    val json = Gson().toJson(spider.poesy(), Poems::class.java)
+                    File(path + "poems.json").writeText(json)
+                }.onFailure {
+                    println("error")
+                    it.message
+                }
+                println("finish")
+            }
+            2 -> {
+                runCatching {
+                    val json = Gson().toJson(spider.verse(), Verses::class.java)
+                    File(path + "verses.json").writeText(json)
+                }.onFailure {
+                    println("error")
+                    it.message
+                }
+                println("finish")
+            }
+        }
+    }
 }
