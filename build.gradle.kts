@@ -15,7 +15,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.10")
     implementation("org.jsoup:jsoup:1.15.2")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("mysql:mysql-connector-java:8.0.29")
     testImplementation(kotlin("test"))
 }
 
