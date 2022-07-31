@@ -15,8 +15,8 @@ object Http {
                 .build()
             val response = client.newCall(request).execute()
             result = response.body.string()
-        }.onFailure {
-
+        }.onFailure { t ->
+            t.message
         }
         return result
     }

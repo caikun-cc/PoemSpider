@@ -10,15 +10,15 @@ private const val path = "./src/main/resources/"
 fun main() {
 
     while (true) {
-        println("\n\n====================================================================")
+        println("\n====================================================================")
         println("1、爬取古诗")
         println("2、爬取名句")
-        println("====================================================================\n\n")
+        println("====================================================================\n")
         println("输入序号:")
         when (Scanner(System.`in`).nextInt()) {
             1 -> {
                 runCatching {
-                    val json = Gson().toJson(spider.poesy(), Poems::class.java)
+                    val json = Gson().toJson(spider.poesy())
                     File(path + "poems.json").writeText(json)
                 }.onFailure {
                     println("error")
@@ -26,9 +26,10 @@ fun main() {
                 }
                 println("finish")
             }
+
             2 -> {
                 runCatching {
-                    val json = Gson().toJson(spider.verse(), Verses::class.java)
+                    val json = Gson().toJson(spider.verse())
                     File(path + "verses.json").writeText(json)
                 }.onFailure {
                     println("error")

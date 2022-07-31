@@ -20,7 +20,7 @@ class PoemSpider {
      * 爬取古诗
      * @return 存放古诗的Poems对象
      */
-    fun poesy(): Poems {
+    fun poesy(): List<Poem> {
         val poems = mutableListOf<Poem>()
         val authors = mutableMapOf<String, String>()
 
@@ -36,9 +36,9 @@ class PoemSpider {
         //获取作者下古诗链接
         if (authors.isNotEmpty()) {
             authors.forEach { (k, v) ->
-                println("\n\n==============================================================")
+                println("\n==============================================================")
                 println("$k:$v")
-                println("==============================================================\n\n")
+                println("==============================================================\n")
                 addUrls(v)
             }
 
@@ -50,14 +50,14 @@ class PoemSpider {
             }
             println("sun:${poems.size}")
         }
-        return Poems(poems)
+        return poems
     }
 
     /**
      * 爬取名句
      * @return 存放名句的Verses对象
      */
-    fun verse(): Verses {
+    fun verse(): List<Verse> {
         val types = mutableMapOf<String, String>()
 
         //获取分类
@@ -77,7 +77,7 @@ class PoemSpider {
             }
             println("sun:${sentences.size}")
         }
-        return Verses(sentences)
+        return sentences
     }
 
     /**
